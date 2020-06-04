@@ -1,5 +1,6 @@
 {
   "name": "light-player",
+  "description": "Search movies and play.",
   "version": "0.0.1",
   "license": "MIT",
   "author": {

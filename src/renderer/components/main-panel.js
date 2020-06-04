@@ -100,7 +100,7 @@ class MainPanel extends React.Component {
           {this.state.selected && (
             <RefreshableHlsPlayer
               autoplay={true}
-              url={this.state.selected.value}
+              url={`http:${this.state.selected.value}`}
               height="100%"
               width="100%"
               videoProps={{

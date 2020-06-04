@@ -15,7 +15,8 @@
   "scripts": {
     "dev": "electron-webpack dev --enable-logging",
     "build": "electron-webpack",
-    "release": "yarn build && electron-builder"
+    "release": "yarn build && electron-builder",
+    "deb": "yarn build && electron-builder --linux deb"
   },
   "dependencies": {
     "axios": "^0.19.2",

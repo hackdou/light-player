@@ -27,7 +27,7 @@ class MainPanel extends React.Component {
     };
   }
 
-  loadVideo(id) {
+  loadVideo(id, idx = 0) {
     if (id === null) {
       return this.setState({
         loading: false,
@@ -41,10 +41,10 @@ class MainPanel extends React.Component {
         this.setState({
           loading: false,
           selected:
-            ret.partList.length > 0
+            ret.partList.length > idx
               ? {
-                  value: ret.partList[0].url,
-                  label: ret.partList[0].part_title,
+                  value: ret.partList[idx].url,
+                  label: ret.partList[idx].part_title,
                 }
               : null,
           partList: ret.partList,
@@ -66,15 +66,12 @@ class MainPanel extends React.Component {
   playNext() {
     const { selected, partList } = this.state;
 
+    let idx = 0;
+
     for (let i = 0; i < partList.length; i++) {
       if (selected.label === partList[i].part_title) {
         if (i + 1 < partList.length) {
-          this.setState({
-            selected: {
-              value: partList[i + 1].url,
-              label: partList[i + 1].part_title,
-            },
-          });
+          this.loadVideo(this.props.id, i + 1);
         }
       }
     }

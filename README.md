@@ -5,3 +5,7 @@ Search for movies and play them.
 ## Install.
 
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/light-player)
+
+## Usage.
+
+* `Ctll-F` to toggle side menu.

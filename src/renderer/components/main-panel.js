@@ -1,8 +1,9 @@
-import React from 'react';
-import ReactSelect from 'react-select';
-import ReactHlsPlayer from 'react-hls-player';
+import React from "react";
+import ReactSelect from "react-select";
+import ReactHlsPlayer from "react-hls-player";
 
-import WekanTv from '../sources/wekan-tv';
+import IpcProxy from "../../ipc/proxy";
+import IpcEvent from "../../ipc/event";
 
 class RefreshableHlsPlayer extends ReactHlsPlayer {
   constructor(props) {
@@ -22,82 +23,140 @@ class MainPanel extends React.Component {
 
     this.state = {
       loading: true,
-      selected: null,
-      partList: [],
+      episodes: [],
+      stream: null,
     };
   }
 
-  loadVideo(id, idx = 0) {
-    if (id === null) {
-      return this.setState({
-        loading: false,
-        selected: null,
-        partList: [],
-      });
-    }
-
+  loadStream(episode) {
     this.setState({ loading: true }, () => {
-      WekanTv.getVideoParts(id).then((ret) => {
+      IpcProxy.invoke(IpcEvent.FIND_STREAM, {
+        providerId: episode.providerId,
+        tvId: episode.tvId,
+        episodeId: episode.id,
+      }).then((stream) => {
         this.setState({
           loading: false,
-          selected:
-            ret.partList.length > idx
-              ? {
-                  value: ret.partList[idx].url,
-                  label: ret.partList[idx].part_title,
-                }
-              : null,
-          partList: ret.partList,
+          stream: stream,
         });
       });
     });
   }
 
+  loadEpisodes(tv, idx = 0) {
+    if (tv === null) {
+      return this.setState({
+        loading: false,
+        episodes: [],
+        stream: null,
+      });
+    }
+
+    console.log("loadEpisodes");
+
+    this.setState({ loading: true }, () => {
+      IpcProxy.invoke(IpcEvent.FIND_EPISODES, {
+        providerId: tv.providerId,
+        tvId: tv.id,
+      }).then((episodes) => {
+        console.log("episodes", episodes);
+
+        this.setState(
+          {
+            loading: false,
+            episodes: episodes,
+            stream: null,
+          },
+          () => {
+            if (episodes.length > 0) {
+              this.loadStream(episodes[0]);
+            }
+          }
+        );
+      });
+    });
+  }
+
   componentDidMount() {
-    this.loadVideo(this.props.id);
+    this.loadEpisodes(this.props.tv);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.id != this.props.id) {
-      this.loadVideo(this.props.id);
+    if (prevProps.tv !== this.props.tv) {
+      this.loadEpisodes(this.props.tv);
+    }
+  }
+
+  playingEpisode() {
+    const { stream, episodes } = this.state;
+
+    if (stream === null) return [null, null];
+
+    for (let i = 0; i < episodes.length; i++) {
+      if (stream.episodeId === episodes[i].id) {
+        return [episodes[i], i];
+      }
     }
   }
 
   playNext() {
-    const { selected, partList } = this.state;
+    const { episodes } = this.state;
 
-    let idx = 0;
+    let [_, idx] = this.playingEpisode();
 
-    for (let i = 0; i < partList.length; i++) {
-      if (selected.label === partList[i].part_title) {
-        if (i + 1 < partList.length) {
-          this.loadVideo(this.props.id, i + 1);
-        }
-      }
+    if (idx !== null && idx + 1 < episodes.length) {
+      this.loadStream(episodes[idx + 1]);
     }
+  }
+
+  handleChange({ value }) {
+    const episodes = this.state.episodes.filter(
+      (episode) => episode.id === value
+    );
+
+    if (episodes.length > 0) {
+      this.loadStream(episodes[0]);
+    }
+  }
+
+  renderValue() {
+    const [episode, _] = this.playingEpisode();
+
+    if (episode === null) {
+      return null;
+    } else {
+      return {
+        value: episode.id,
+        label: episode.title,
+      };
+    }
+  }
+
+  renderOptions() {
+    return this.state.episodes.map(({ title, id }) => ({
+      value: id,
+      label: title,
+    }));
   }
 
   render() {
     return (
       <div>
         <div className="Select">
-          {this.state.partList.length > 0 ? (
+          {this.state.episodes.length > 1 && (
             <ReactSelect
               isLoading={this.state.loading}
-              value={this.state.selected}
-              onChange={(selected) => this.setState({ selected })}
-              options={this.state.partList.map((part) => ({
-                value: part.url,
-                label: part.part_title,
-              }))}
+              onChange={this.handleChange.bind(this)}
+              options={this.renderOptions()}
+              value={this.renderValue()}
             />
-          ) : null}
+          )}
         </div>
         <div className="Player">
-          {this.state.selected && (
+          {this.state.stream && (
             <RefreshableHlsPlayer
               autoplay={true}
-              url={`http:${this.state.selected.value}`}
+              url={this.state.stream.url}
               height="100%"
               width="100%"
               videoProps={{

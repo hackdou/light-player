@@ -1,7 +1,10 @@
-import React from 'react';
+import React from "react";
 
-import LeftPanel from './left-panel';
-import MainPanel from './main-panel';
+import LeftPanel from "./left-panel";
+import MainPanel from "./main-panel";
+
+import IpcProxy from "../../ipc/proxy";
+import IpcEvent from "../../ipc/event";
 
 class LightPlayer extends React.Component {
   constructor(props) {
@@ -9,22 +12,22 @@ class LightPlayer extends React.Component {
 
     this.state = {
       showPanel: true,
-      id: null,
+      tv: null,
     };
   }
 
   componentDidMount() {
-    document.addEventListener('keypress', (e) => {
-      if (e.ctrlKey && e.code === 'KeyF') {
+    document.addEventListener("keypress", (e) => {
+      if (e.ctrlKey && e.code === "KeyF") {
         this.setState({ showPanel: !this.state.showPanel });
       }
     });
   }
 
-  handleOpen(id) {
+  handleClick(tv) {
     this.setState({
       showPanel: false,
-      id: id,
+      tv: tv,
     });
   }
 
@@ -33,11 +36,12 @@ class LightPlayer extends React.Component {
       <div className="LightPlayer">
         <title>Light Player</title>
 
-        <div className={`LeftPanel ${this.state.showPanel ? 'On' : 'Off'}`}>
-          <LeftPanel onOpen={(id) => this.handleOpen(id)} />
+        <div className={`LeftPanel ${this.state.showPanel ? "On" : "Off"}`}>
+          <LeftPanel onClick={(tv) => this.handleClick(tv)} />
         </div>
+
         <div className="MainPanel">
-          <MainPanel id={this.state.id} />
+          <MainPanel tv={this.state.tv} />
         </div>
       </div>
     );

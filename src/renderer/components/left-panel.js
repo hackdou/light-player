@@ -1,54 +1,58 @@
-import React from 'react';
+import React from "react";
 
-import WekanTv from '../sources/wekan-tv';
+import IpcProxy from "../../ipc/proxy";
+import IpcEvent from "../../ipc/event";
 
 class LeftPanel extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      search: '',
-      list: [],
+      keyword: "",
+      tvs: [],
+      loading: false,
     };
   }
 
-  handleSearchChange(e) {
-    this.setState({ search: e.target.value });
+  handleChange(e) {
+    this.setState({ keyword: e.target.value });
   }
 
-  submit(e) {
+  handleSubmit(e) {
     e.preventDefault();
 
-    WekanTv.search(this.state.search).then((ret) => {
-      this.setState({ list: ret.list });
+    this.setState({ loading: true }, () => {
+      IpcProxy.invoke(IpcEvent.FIND_TVS, { keyword: this.state.keyword }).then(
+        (tvs) => {
+          this.setState({ tvs, loading: false });
+        }
+      );
     });
   }
 
-  handleClick(id) {
-    if (this.props.onOpen) {
-      this.props.onOpen(id);
-    }
+  handleClick(tv) {
+    this.props.onClick && this.props.onClick(tv);
   }
 
   render() {
     return (
       <div>
-        <form className="Search" onSubmit={(e) => this.submit(e)}>
+        <form className="Search" onSubmit={this.handleSubmit.bind(this)}>
           <input
             type="search"
             placeholder="search"
-            onChange={(e) => this.handleSearchChange(e)}
+            onChange={this.handleChange.bind(this)}
           />
         </form>
 
         <div className="List">
-          {this.state.list.map((item) => (
+          {this.state.tvs.map((tv) => (
             <div
-              key={item._id}
-              style={{ backgroundImage: `url(${item.photo})` }}
-              onClick={() => this.handleClick(item._id)}
+              key={tv.id}
+              style={{ backgroundImage: `url(${tv.cover})` }}
+              onClick={() => this.handleClick(tv)}
             >
-              <div className="List-Title">{item.title}</div>
+              <div className="List-Title">{tv.title}</div>
             </div>
           ))}
         </div>

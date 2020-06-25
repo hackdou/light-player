@@ -1,62 +1,67 @@
 {
-  "name": "light-player",
-  "description": "Search movies and play.",
-  "version": "0.0.3",
-  "license": "MIT",
-  "author": {
-    "name": "Guangrui Wang",
-    "email": "aguang.xyz@gmail.com"
-  },
-  "homepage": "https://github.com/aguang-xyz/light-player",
-  "repository": "https://github.com/aguang-xyz/light-player",
-  "bugs": {
-    "url": "https://github.com/aguang-xyz/light-player/issues"
-  },
-  "scripts": {
-    "dev": "electron-webpack dev --enable-logging",
-    "build": "electron-webpack",
-    "release": "yarn build && electron-builder",
-    "deb": "yarn build && electron-builder --linux deb"
-  },
-  "dependencies": {
-    "axios": "^0.19.2",
-    "normalize.css": "^8.0.1",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-hls-player": "^0.0.6",
-    "react-icons": "^3.10.0",
-    "react-select": "^3.1.0",
-    "source-map-support": "^0.5.16"
-  },
-  "devDependencies": {
-    "@babel/preset-react": "^7.10.1",
-    "electron": "8.2.0",
-    "electron-builder": "^22.4.1",
-    "electron-webpack": "^2.8.2",
-    "webpack": "~4.42.1"
-  },
-  "build": {
-    "appId": "xyz.aguang.editor.aurora",
-    "compression": "maximum",
-    "directories": {
-      "buildResources": "resources"
+    "name": "light-player",
+    "description": "Search movies and play.",
+    "version": "0.0.3",
+    "license": "MIT",
+    "author": {
+        "name": "Guangrui Wang",
+        "email": "aguang.xyz@gmail.com"
     },
-    "linux": {
-      "category": "Productivity",
-      "target": [
-        "snap"
-      ],
-      "publish": [
-        {
-          "provider": "github"
+    "homepage": "https://github.com/aguang-xyz/light-player",
+    "repository": "https://github.com/aguang-xyz/light-player",
+    "bugs": {
+        "url": "https://github.com/aguang-xyz/light-player/issues"
+    },
+    "scripts": {
+        "dev": "electron-webpack dev --enable-logging",
+        "build": "electron-webpack",
+        "release": "yarn build && electron-builder",
+        "deb": "yarn build && electron-builder --linux deb",
+        "test": "jest --testTimeout 60000"
+    },
+    "dependencies": {
+        "axios": "^0.19.2",
+        "cheerio": "^1.0.0-rc.3",
+        "normalize.css": "^8.0.1",
+        "react": "^16.13.1",
+        "react-dom": "^16.13.1",
+        "react-hls-player": "^0.0.6",
+        "react-icons": "^3.10.0",
+        "react-select": "^3.1.0",
+        "source-map-support": "^0.5.16"
+    },
+    "devDependencies": {
+        "@babel/preset-react": "^7.10.1",
+        "@babel/preset-typescript": "^7.10.1",
+        "electron": "8.2.0",
+        "electron-builder": "^22.4.1",
+        "electron-webpack": "^2.8.2",
+        "electron-webpack-ts": "^4.0.1",
+        "jest": "^26.1.0",
+        "typescript": "^3.9.5",
+        "webpack": "~4.42.1"
+    },
+    "build": {
+        "appId": "xyz.aguang.editor.aurora",
+        "compression": "maximum",
+        "directories": {
+            "buildResources": "resources"
         },
-        {
-          "provider": "snapStore",
-          "channels": [
-            "stable"
-          ]
+        "linux": {
+            "category": "Productivity",
+            "target": [
+                "snap"
+            ],
+            "publish": [{
+                    "provider": "github"
+                },
+                {
+                    "provider": "snapStore",
+                    "channels": [
+                        "stable"
+                    ]
+                }
+            ]
         }
-      ]
     }
-  }
 }

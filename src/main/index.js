@@ -1,12 +1,14 @@
-'use strict';
+import { app, BrowserWindow, Menu } from "electron";
+import Path from "path";
+import Url from "url";
 
-import { app, BrowserWindow, Menu } from 'electron';
-import * as path from 'path';
-import { format as formatUrl } from 'url';
+import { findTvs, findEpisodes, findStream } from "../tv/api";
 
-const isDevelopment = process.env.NODE_ENV !== 'production';
+import IpcProxy from "../ipc/proxy";
+import IpcEvent from "../ipc/event";
 
-// global reference to mainWindow (necessary to prevent window from being garbage collected)
+const isDevelopment = process.env.NODE_ENV !== "production";
+
 let mainWindow;
 
 function createMainWindow() {
@@ -22,48 +24,54 @@ function createMainWindow() {
     window.webContents.openDevTools();
   }
 
-  if (isDevelopment) {
-    window.loadURL(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`);
-  } else {
-    window.loadURL(
-      formatUrl({
-        pathname: path.join(__dirname, 'index.html'),
-        protocol: 'file',
-        slashes: true,
-      }),
-    );
-  }
+  window.loadURL(
+    isDevelopment
+      ? `http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`
+      : Url.format({
+          pathname: Path.join(__dirname, "index.html"),
+          protocol: "file",
+          slashes: true,
+        })
+  );
 
-  window.on('closed', () => {
-    mainWindow = null;
+  window.on("closed", () => (mainWindow = null));
+
+  window.webContents.on("devtools-opened", () => {
+    window.focus();
+    setImmediate(() => window.focus());
   });
 
-  window.webContents.on('devtools-opened', () => {
-    window.focus();
-    setImmediate(() => {
-      window.focus();
-    });
+  // Initialize ipc-proxy.
+  IpcProxy.setWebContents(window.webContents);
+
+  // Define remote functions for ui-process.
+  IpcProxy.define(IpcEvent.FIND_TVS, ({ keyword }) => {
+    return findTvs(keyword);
+  });
+
+  IpcProxy.define(IpcEvent.FIND_EPISODES, ({ providerId, tvId }) => {
+    return findEpisodes(providerId, tvId);
+  });
+
+  IpcProxy.define(IpcEvent.FIND_STREAM, ({ providerId, tvId, episodeId }) => {
+    return findStream(providerId, tvId, episodeId);
   });
 
   return window;
 }
 
-// quit application when all windows are closed
-app.on('window-all-closed', () => {
-  // on macOS it is common for applications to stay open until the user explicitly quits
-  if (process.platform !== 'darwin') {
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
     app.quit();
   }
 });
 
-app.on('activate', () => {
-  // on macOS it is common to re-create a window even after all windows have been closed
+app.on("activate", () => {
   if (mainWindow === null) {
     mainWindow = createMainWindow();
   }
 });
 
-// create main BrowserWindow when electron is ready
-app.on('ready', () => {
+app.on("ready", () => {
   mainWindow = createMainWindow();
 });

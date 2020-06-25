@@ -1,5 +1,5 @@
-import {Episode, Stream, Tv, TvProvider} from "../../../src/tv/api.ts";
-import WekanTvProvider from "../../../src/tv/providers/wekan-tv.ts";
+import WekanTvProvider from "../../../src/tv/providers/wekan-tv";
+import {Episode, Stream, Tv, TvProvider} from "../../../src/tv/types";
 
 const provider: TvProvider = new WekanTvProvider();
 

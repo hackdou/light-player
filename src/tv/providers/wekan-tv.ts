@@ -1,6 +1,6 @@
 import Axios from "axios";
 
-import {Episode, Stream, Tv, TvProvider} from "../types.ts";
+import {Episode, Stream, Tv, TvProvider} from "../types";
 
 const client = Axios.create({
   baseURL : "https://www.wekan.tv/index.php",
@@ -29,7 +29,7 @@ export default class WekanTvProvider implements TvProvider {
             content : keyword,
           }
         })
-        .then(ret => ret.list.map(({_id, title, photo}) => <Tv>{
+        .then((ret: any) => ret.list.map(({_id, title, photo}) => <Tv>{
           id : `${_id}`,
           providerId : PROVIDER_ID,
           title : title,
@@ -40,18 +40,19 @@ export default class WekanTvProvider implements TvProvider {
   public episodes(tvId: string): Promise<Episode[]> {
 
     return client.get("/video/part", {params : {tvid : tvId}})
-        .then(ret => ret.partList.map(({part_id, part_title}) => <Episode>{
-          id : `${part_id}`,
-          tvId : tvId,
-          providerId : PROVIDER_ID,
-          title : part_title,
-        }));
+        .then((ret: any) =>
+                  ret.partList.map(({part_id, part_title}) => <Episode>{
+                    id : `${part_id}`,
+                    tvId : tvId,
+                    providerId : PROVIDER_ID,
+                    title : part_title,
+                  }));
   }
 
   public stream(tvId: string, episodeId: string): Promise<Stream> {
 
     return client.get("/video/part", {params : {tvid : tvId}})
-        .then(ret =>
+        .then((ret: any) =>
                   ret.partList.filter(({part_id}) => `${part_id}` === episodeId)
                       .map(({part_title, url}) => <Stream>{
                         providerId : PROVIDER_ID,

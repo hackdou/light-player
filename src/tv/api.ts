@@ -1,6 +1,6 @@
 import JiqimaoTvProvider from './providers/jiqimao-tv';
 import WekanTvProvider from './providers/wekan-tv';
-import {TvProvider} from "./types.ts";
+import {Episode, Stream, Tv, TvProvider} from "./types";
 
 const tvProviders: Array<TvProvider> = [
 
@@ -15,16 +15,30 @@ function sim(s1: string, s2: string): number {
   return 1 - 2 * same / (s1.length + s2.length);
 }
 
+function flatten(a: any[]): any[] {
+
+  let result = [];
+
+  for (let i = 0; i < a.length; i++) {
+    for (let j = 0; j < a[i].length; j++) {
+      result.push(a[i][j]);
+    }
+  }
+
+  return result;
+}
+
 export function findTvs(keyword: string): Promise<Array<Tv>> {
 
   const tasks = tvProviders.map(p => p.tvs(keyword).catch(() => []));
 
   return Promise.all(tasks).then(
-      ret => ret.flat().sort((x, y) => sim(x.title, keyword) -
-                                       sim(y.title, keyword)));
+      ret => flatten(ret).sort((x, y) => sim(x.title, keyword) -
+                                         sim(y.title, keyword)));
 }
 
-export function findEpisodes(providerId, tvId): Promise<Array<Episode>> {
+export function findEpisodes(providerId: string,
+                             tvId: string): Promise<Array<Episode>> {
 
   const providers = tvProviders.filter(p => p.id == providerId);
 
@@ -34,12 +48,13 @@ export function findEpisodes(providerId, tvId): Promise<Array<Episode>> {
   return providers[0].episodes(tvId).catch(() => []);
 }
 
-export function findStream(providerId, tvId, episodeId): Promise<Stream> {
+export function findStream(providerId: string, tvId: string,
+                           episodeId: string): Promise<Stream|null> {
 
   const providers = tvProviders.filter(p => p.id == providerId);
 
   if (providers.length === 0)
-    return Promise.resolve([]);
+    return Promise.resolve(null);
 
   return providers[0].stream(tvId, episodeId).catch(() => null);
 }

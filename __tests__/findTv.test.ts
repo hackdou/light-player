@@ -1,4 +1,4 @@
-import {findTvs} from '../src/tv/api.ts';
+import {findTvs} from '../src/tv/api';
 
 test("findTv.1", async () => {
   let tvs = await findTvs("隐秘的角落");

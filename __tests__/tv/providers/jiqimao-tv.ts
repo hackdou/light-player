@@ -1,5 +1,5 @@
-import {Episode, Stream, Tv, TvProvider} from "../../../src/tv/api.ts";
-import JiqimaoTvProvider from "../../../src/tv/providers/jiqimao-tv.ts";
+import JiqimaoTvProvider from "../../../src/tv/providers/jiqimao-tv";
+import {Episode, Stream, Tv, TvProvider} from "../../../src/tv/types";
 
 const provider: TvProvider = new JiqimaoTvProvider();
 
@@ -16,7 +16,7 @@ test("tvs", async () => {
 });
 
 test("episodes", async () => {
-  const episodes =
+  const episodes: Episode[] =
       await provider.episodes("a331582dfd27fbcddd3d41edc96552c3890dc044");
 
   expect(episodes[0]).toStrictEqual({

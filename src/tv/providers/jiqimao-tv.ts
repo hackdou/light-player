@@ -2,7 +2,7 @@ import Axios from "axios"
 import adapter from 'axios/lib/adapters/http';
 import Cheerio from "cheerio";
 
-import {Episode, Tv, TvProvider} from "../types.ts";
+import {Episode, Stream, Tv, TvProvider} from "../types";
 
 const webClient = Axios.create({
   baseURL : "http://jiqimao.tv/",
@@ -48,7 +48,7 @@ export default class JiqimaoTvProvider implements TvProvider {
 
     return webClient.get(`/search/video/${encodeURI(keyword)}`)
         .then(
-            $ =>
+            ($: any) =>
                 $(".search-tv-box")
                     .map((_, elem) => {
                       const href = $(elem.parent).attr("href");
@@ -68,7 +68,7 @@ export default class JiqimaoTvProvider implements TvProvider {
   public episodes(tvId: string): Promise<Episode[]> {
 
     return webClient.get(`/movie/show/${tvId}`)
-        .then($ => {
+        .then(($: any) => {
           const href = $("ul.more-play-link-drama li a").first().attr("href");
 
           return href.split("/")[href.split("/").length - 1];

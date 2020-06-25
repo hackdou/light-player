@@ -1,178 +1,206 @@
 ::-webkit-scrollbar {
-  width: 0px;
-  background: transparent;
+    width: 0px;
+    background: transparent;
 }
 
 html {
 
-  background-image: url(../../../resources/icons/icon.svg);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 10rem;
+    background-image: url(../../../resources/icons/icon.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 10rem;
 
-  background-color: #242424;
+    background-color: #242424;
 
-  min-height: 100%;
+    min-height: 100%;
 }
 
 .LightPlayer {
 
-  position: fixed;
+    position: fixed;
 
-  top: 0;
-  left: 0;
+    top: 0;
+    left: 0;
 
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 
-  display: flex;
+    display: flex;
 }
 
 .LightPlayer .LeftPanel {
 
-  position: absolute;
+    position: absolute;
 
-  top: 0;
+    top: 0;
 
-  width: 20rem;
-  height: 100%;
+    width: 20rem;
+    height: 100%;
 
-  background-color: #333333;
+    background-color: #333333;
 
-  transition: left 0.2s;
+    transition: left 0.2s;
 
-  z-index: 3;
+    z-index: 3;
 }
 
 .LightPlayer .LeftPanel.On {
 
-  left: 0;
+    left: 0;
 }
 
 .LightPlayer .LeftPanel.Off {
 
-  left: -20rem;
+    left: -20rem;
 }
 
 .LightPlayer .LeftPanel>div {
 
-  display: flex;
-  height: 100%;
-  flex-direction: column;
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+}
+
+.LightPlayer .LeftPanel .Loading {
+
+    margin-top: 3rem;
+}
+
+.LightPlayer .LeftPanel .Loading>div {
+
+    margin: auto
 }
 
 .LightPlayer .LeftPanel .Search {
 
-  padding: 1rem;
+    padding: 1rem;
 }
 
 .LightPlayer .LeftPanel .Search input[type=search] {
 
-  width: 100%;
-  height: 2rem;
-  outline: none;
-  border: 1px solid #525252;
-  box-sizing: border-box;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-  border-radius: 0.2rem;
-  background-color: #242424;
-  color: #525252;
-  color: #ffffff;
-  font-size: 0.8rem;
+    width: 100%;
+    height: 2rem;
+    outline: none;
+    border: 1px solid #525252;
+    box-sizing: border-box;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    border-radius: 0.2rem;
+    background-color: #242424;
+    color: #525252;
+    color: #ffffff;
+    font-size: 0.8rem;
 }
 
 .LightPlayer .LeftPanel .List {
 
-  flex: 1;
-  overflow: auto;
+    flex: 1;
+    overflow: auto;
 }
 
 .LightPlayer .LeftPanel .List {
 
-  padding-left: 1rem;
-  padding-right: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
-.LightPlayer .LeftPanel .List>div {
+.LightPlayer .LeftPanel .List>.Item {
 
-  cursor: pointer;
-  position: relative;
-  margin-bottom: 1rem;
-  border-radius: 0.2rem;
-  overflow: hidden;
-  height: 28rem;
-  background-position: center;
-  background-size: cover;
+    cursor: pointer;
+    position: relative;
+    margin-bottom: 1rem;
+    border-radius: 0.2rem;
+    overflow: hidden;
+    height: 28rem;
+    background-position: center;
+    background-size: cover;
 
-  transition: transform 0.2s;
+    transition: transform 0.2s;
 }
 
-.LightPlayer .LeftPanel .List>div:hover {
+.LightPlayer .LeftPanel .List>.Item:hover {
 
-  box-shadow: 0px 0px 10px black;
+    box-shadow: 0px 0px 10px black;
 
-  transform: scale(1.02);
+    transform: scale(1.02);
 }
 
-.LightPlayer .LeftPanel .List>div:active {
+.LightPlayer .LeftPanel .List>.Item:active {
 
-  transform: scale(0.98);
+    transform: scale(0.98);
 }
 
-.LightPlayer .LeftPanel .List>div .List-Title {
+.LightPlayer .LeftPanel .List>.Item .List-Title {
 
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
 
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
 
-  padding: 1rem;
-  box-sizing: border-box;
-  text-align: center;
+    padding: 1rem;
+    box-sizing: border-box;
+    text-align: center;
 }
 
 .MainPanel {
 
-  flex: 1;
+    flex: 1;
+}
+
+.MainPanel .Loading {
+
+    padding-top: 60vh;
+    text-align: center;
+}
+
+.MainPanel .Loading>div {
+
+    margin: auto;
 }
 
 .MainPanel .Select {
 
-  position: absolute;
-  top: 3rem;
-  left: calc(50% - 5rem);
-  width: 10rem;
-  opacity: 0.1;
-  transition: opacity 0.2s;
-  z-index: 2;
+    position: absolute;
+    top: 3rem;
+    left: calc(50% - 5rem);
+    width: 10rem;
+    opacity: 0.1;
+    transition: opacity 0.2s;
+    z-index: 2;
 }
 
 .MainPanel .Select:hover {
 
-  opacity: 0.7;
+    opacity: 0.7;
 }
 
 .MainPanel .Player {
 
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
 }
 
 .player-area {
 
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 video {
 
-  outline: none;
+    outline: none;
+}
+
+iframe {
+
+    width: 100%;
+    height: 100%;
+    border: 0px;
 }

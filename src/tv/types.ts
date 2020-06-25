@@ -41,6 +41,9 @@ export interface Stream {
 
   // Video stream url.
   url: string;
+
+  // Stream format.
+  format: string;
 }
 
 export interface TvProvider {

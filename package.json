@@ -28,6 +28,7 @@
         "react-hls-player": "^0.0.6",
         "react-icons": "^3.10.0",
         "react-select": "^3.1.0",
+        "react-spinners": "^0.9.0",
         "source-map-support": "^0.5.16"
     },
     "devDependencies": {
@@ -52,7 +53,8 @@
             "target": [
                 "snap"
             ],
-            "publish": [{
+            "publish": [
+                {
                     "provider": "github"
                 },
                 {

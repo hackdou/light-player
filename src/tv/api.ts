@@ -17,11 +17,7 @@ function sim(s1: string, s2: string): number {
 
 export function findTvs(keyword: string): Promise<Array<Tv>> {
 
-  const tasks = tvProviders.map(p => p.tvs(keyword).catch(e => {
-    console.warn(e);
-
-    return [];
-  }))
+  const tasks = tvProviders.map(p => p.tvs(keyword).catch(() => []));
 
   return Promise.all(tasks).then(
       ret => ret.flat().sort((x, y) => sim(x.title, keyword) -
@@ -35,7 +31,7 @@ export function findEpisodes(providerId, tvId): Promise<Array<Episode>> {
   if (providers.length === 0)
     return Promise.resolve([]);
 
-  return providers[0].episodes(tvId);
+  return providers[0].episodes(tvId).catch(() => []);
 }
 
 export function findStream(providerId, tvId, episodeId): Promise<Stream> {
@@ -45,5 +41,5 @@ export function findStream(providerId, tvId, episodeId): Promise<Stream> {
   if (providers.length === 0)
     return Promise.resolve([]);
 
-  return providers[0].stream(tvId, episodeId);
+  return providers[0].stream(tvId, episodeId).catch(() => null);
 }

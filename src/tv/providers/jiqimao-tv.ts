@@ -17,8 +17,12 @@ const apiRClient = Axios.create({
 });
 
 apiRClient.interceptors.response.use((ret) => {
-  if (!ret.data.success)
+  if (!ret.data.success) {
+
+    console.log(ret.data);
+
     throw new Error("Request failed from jiqimap.tv");
+  }
 
   return ret.data;
 });
@@ -90,7 +94,8 @@ export default class JiqimaoTvProvider implements TvProvider {
           providerId : PROVIDER_ID,
           tvId : tvId,
           episodeId : episodeId,
-          url : ret.data.parser.url
+          url : ret.data.parser.url,
+          format : ret.data.parser.ext,
         });
   }
 }

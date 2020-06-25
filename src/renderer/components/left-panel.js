@@ -3,6 +3,8 @@ import React from "react";
 import IpcProxy from "../../ipc/proxy";
 import IpcEvent from "../../ipc/event";
 
+import HashLoader from "react-spinners/HashLoader";
+
 class LeftPanel extends React.Component {
   constructor(props) {
     super(props);
@@ -46,15 +48,23 @@ class LeftPanel extends React.Component {
         </form>
 
         <div className="List">
-          {this.state.tvs.map((tv) => (
-            <div
-              key={tv.id}
-              style={{ backgroundImage: `url(${tv.cover})` }}
-              onClick={() => this.handleClick(tv)}
-            >
-              <div className="List-Title">{tv.title}</div>
+          {this.state.loading && (
+            <div className="Loading">
+              <HashLoader color="#525252" />
             </div>
-          ))}
+          )}
+
+          {!this.state.loading &&
+            this.state.tvs.map((tv) => (
+              <div
+                className="Item"
+                key={tv.id}
+                style={{ backgroundImage: `url(${tv.cover})` }}
+                onClick={() => this.handleClick(tv)}
+              >
+                <div className="List-Title">{tv.title}</div>
+              </div>
+            ))}
         </div>
       </div>
     );

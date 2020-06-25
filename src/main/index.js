@@ -1,8 +1,9 @@
-import { app, BrowserWindow, Menu } from "electron";
+import { app, shell, BrowserWindow, Menu } from "electron";
 import Path from "path";
 import Url from "url";
 
 import { findTvs, findEpisodes, findStream } from "../tv/api";
+import packageInfo from "../../package.json";
 
 import IpcProxy from "../ipc/proxy";
 import IpcEvent from "../ipc/event";
@@ -12,13 +13,45 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 let mainWindow;
 
 function createMainWindow() {
+  // Create browser window.
   const window = new BrowserWindow({
     webPreferences: {
       nodeIntegration: true,
+      webSecurity: false,
     },
   });
 
-  Menu.setApplicationMenu(null);
+  // Initialize application menu.
+  Menu.setApplicationMenu(
+    Menu.buildFromTemplate([
+      {
+        label: "View",
+        submenu: [
+          {
+            label: "Toggle Searchbar (Ctrl-Shift-F)",
+            click: () => IpcProxy.send(IpcEvent.TOGGLE_SEARCH_BAR),
+          },
+        ],
+      },
+      {
+        label: "Help",
+        submenu: [
+          {
+            label: "Home Page",
+            click: () => shell.openExternal(packageInfo.homepage),
+          },
+          {
+            label: "Report Issue",
+            click: () => shell.openExternal(packageInfo.bugs.url),
+          },
+          {
+            label: "Check Update",
+            click: () => shell.openExternal(packageInfo.homepage + "/releases"),
+          },
+        ],
+      },
+    ])
+  );
 
   if (isDevelopment) {
     window.webContents.openDevTools();

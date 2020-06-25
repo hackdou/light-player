@@ -1,6 +1,7 @@
 import React from "react";
 import ReactSelect from "react-select";
 import ReactHlsPlayer from "react-hls-player";
+import BeatLoader from "react-spinners/BeatLoader";
 
 import IpcProxy from "../../ipc/proxy";
 import IpcEvent from "../../ipc/event";
@@ -52,14 +53,12 @@ class MainPanel extends React.Component {
       });
     }
 
-    console.log("loadEpisodes");
-
     this.setState({ loading: true }, () => {
       IpcProxy.invoke(IpcEvent.FIND_EPISODES, {
         providerId: tv.providerId,
         tvId: tv.id,
       }).then((episodes) => {
-        console.log("episodes", episodes);
+        console.log("episodes:", episodes);
 
         this.setState(
           {
@@ -139,7 +138,40 @@ class MainPanel extends React.Component {
     }));
   }
 
+  renderPlayer() {
+    const { format, url } = this.state.stream;
+
+    if (format === "frame") {
+      return <iframe src={url} />;
+    }
+
+    return (
+      <RefreshableHlsPlayer
+        autoplay={true}
+        url={url}
+        height="100%"
+        width="100%"
+        videoProps={{
+          disablePictureInPicture: true,
+          onEnded: () => this.playNext(),
+        }}
+      />
+    );
+  }
+
   render() {
+    if (this.state.stream !== null) {
+      console.log("stream:", this.state.stream);
+    }
+
+    if (this.state.loading) {
+      return (
+        <div className="Loading">
+          <BeatLoader color="#525252" />
+        </div>
+      );
+    }
+
     return (
       <div>
         <div className="Select">
@@ -152,20 +184,7 @@ class MainPanel extends React.Component {
             />
           )}
         </div>
-        <div className="Player">
-          {this.state.stream && (
-            <RefreshableHlsPlayer
-              autoplay={true}
-              url={this.state.stream.url}
-              height="100%"
-              width="100%"
-              videoProps={{
-                disablePictureInPicture: true,
-                onEnded: () => this.playNext(),
-              }}
-            />
-          )}
-        </div>
+        <div className="Player">{this.state.stream && this.renderPlayer()}</div>
       </div>
     );
   }

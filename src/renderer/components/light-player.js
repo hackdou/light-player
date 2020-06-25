@@ -18,9 +18,13 @@ class LightPlayer extends React.Component {
 
   componentDidMount() {
     document.addEventListener("keypress", (e) => {
-      if (e.ctrlKey && e.code === "KeyF") {
+      if (e.ctrlKey && e.shiftKey && e.code === "KeyF") {
         this.setState({ showPanel: !this.state.showPanel });
       }
+    });
+
+    IpcProxy.on(IpcEvent.TOGGLE_SEARCH_BAR, () => {
+      this.setState({ showPanel: !this.state.showPanel });
     });
   }
 

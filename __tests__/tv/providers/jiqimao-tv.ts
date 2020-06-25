@@ -37,4 +37,6 @@ test("stream", async () => {
   expect(stream.episodeId).toBe('b0cbf653d10708e206f64f372313c684f28eec42');
 
   expect(stream.url).toBeTruthy();
+
+  expect(stream.format).toBe("m3u8");
 });

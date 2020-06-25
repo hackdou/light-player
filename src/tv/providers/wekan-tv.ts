@@ -57,7 +57,8 @@ export default class WekanTvProvider implements TvProvider {
                         providerId : PROVIDER_ID,
                         tvId : tvId,
                         episodeId : episodeId,
-                        url : `http:${url}`
+                        url : `http:${url}`,
+                        format : 'm3u8',
                       })[0]);
   }
 }

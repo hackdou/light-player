@@ -14,4 +14,4 @@ The video resources searched by this software are collected on the Internet, and
 
 ## Usage.
 
-* `Ctll-F` to toggle side menu.
+* `Ctll-Sfhit-F` to toggle search bar.

@@ -1,7 +1,0 @@
-﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=72fda874_002D426f_002D436b_002D9296_002Dacbb28e72c6f/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Session" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;And&gt;
-    &lt;Project Location="/Users/aguang/Repositories/aguang-xyz/light-player/LightPlayer.Test" Presentation="&amp;lt;LightPlayer.Test&amp;gt;" /&gt;
-    &lt;Namespace&gt;LightPlayer.Test.Services&lt;/Namespace&gt;
-  &lt;/And&gt;
-&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

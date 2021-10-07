@@ -1,0 +1,128 @@
+@inject IVideoPlayerService _videoPlayerService
+
+<style>
+    .light-player-volume-bar
+    {
+        width: 5rem;
+        margin-top: 5px;
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+    }
+    
+    /* Styling the Thumb for Firefox */
+    .light-player-volume-bar > .mud-slider > input[type=range]::-moz-range-thumb
+    {
+        background: #f7f7f7;
+    }
+    
+    /* Styling the Thumb for Webkit/Blink */
+    .light-player-volume-bar > .mud-slider > input[type=range]::-webkit-slider-thumb
+    {
+        background: #f7f7f7;
+    }
+    
+    /* Styling the Track (FireFox) */
+    .light-player-volume-bar > .mud-slider > input[type=range]::-moz-range-track
+    {
+        background: #d6d5d5;
+        box-shadow: 0 0 50px white;
+    }
+    
+    /* Styling the Track (Webkit / Blink) */
+    .light-player-volume-bar > .mud-slider > input[type=range]::-webkit-slider-runnable-track
+    {
+        background: #d6d5d5;
+        box-shadow: 0 0 50px white;
+    }
+</style>
+
+<MudIconButton
+    Disabled="@(Disabled)"
+    Icon="@(Icon)"
+    Color="Color.Inherit"
+    Edge="Edge.End"
+    OnClick="@(OnToggleMutedAsync)" />
+
+<MudItem Class="light-player-volume-bar">
+    <MudSlider
+        Disabled="@(Disabled)"
+        Min="@(0)"
+        Max="@(100)"
+        Value="@(Volume)"
+        Color="Color.Surface"
+        Immediate="@(false)"
+        ValueChanged="@((int x) => OnVolumeChangedAsync(x))"
+    />
+</MudItem>
+
+@code
+{
+    [Parameter]
+    public bool Disabled { get; set; }
+    
+    private int PreviousVolume { get; set; }
+    
+    private bool IsMuted { get; set; }
+    
+    private int Volume { get; set; }
+
+    private string Icon => IsMuted ? Icons.Material.Filled.VolumeOff : Icons.Material.Filled.VolumeUp;
+
+    private async Task OnToggleMutedAsync()
+    {
+        if (IsMuted)
+        {
+            await _videoPlayerService.SetMutedAsync(IsMuted = !IsMuted);
+            await _videoPlayerService.SetVolumeAsync(Volume = PreviousVolume);
+        }
+        else
+        {
+            if (Volume != 0)
+            {
+                PreviousVolume = Volume;
+            }
+            
+            await _videoPlayerService.SetMutedAsync(IsMuted = true);
+            await _videoPlayerService.SetVolumeAsync(Volume = 0);
+        }
+        
+        StateHasChanged();
+    }
+
+    private async Task OnVolumeChangedAsync(int volume)
+    {
+        if (volume == 0 && Volume != 0)
+        {
+            PreviousVolume = Volume;
+        }
+        
+        await _videoPlayerService.SetVolumeAsync(Volume = volume);
+        
+        if (volume > 0)
+        {
+            if (IsMuted)
+            {
+                await _videoPlayerService.SetMutedAsync(IsMuted = false);
+            }
+        }
+        else
+        {
+            if (!IsMuted)
+            {
+                await _videoPlayerService.SetMutedAsync(IsMuted = true);
+            }
+        }
+        
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            IsMuted = await _videoPlayerService.GetIsMutedAsync();
+            PreviousVolume = Volume = await _videoPlayerService.GetVolumeAsync();
+            StateHasChanged();
+        }
+    }
+}

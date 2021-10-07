@@ -1,0 +1,49 @@
+<style>
+    .light-player-video-select .mud-chip-content
+    {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+</style>
+
+<MudMenu Disabled="@(Disabled)" FullWidth="true" MaxHeight="300" Class="light-player-video-select">
+    <ActivatorContent>
+        <MudChip Color="Color.Default">
+            @(CurrentVideo?.Title ?? "None")
+        </MudChip>
+    </ActivatorContent>
+    
+    <ChildContent>
+        @if (!Disabled && Videos != null)
+        {
+            @foreach (var video in Videos)
+            {
+                <MudMenuItem OnClick="@(() => OnClickAsync(video))">
+                    @(video.Title)
+                </MudMenuItem>
+            }
+        }
+    </ChildContent>
+</MudMenu>
+
+@code
+{
+    private bool Disabled => Videos == null || Videos.Count == 0;
+
+    [Parameter]
+    public IReadOnlyCollection<Video> Videos { get; set; }
+    
+    [Parameter]
+    public Video CurrentVideo { get; set; }
+
+    [Parameter]
+    public Func<Video, Task> OnSelectAsync { get; set; }
+
+    private async Task OnClickAsync(Video video)
+    {
+        if (OnSelectAsync != null)
+        {
+            await OnSelectAsync(video);
+        }
+    }
+}

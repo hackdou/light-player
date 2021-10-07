@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <RootNamespace>LightPlayer.Business</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\LightPlayer.Core\LightPlayer.Core.csproj" />
+      <ProjectReference Include="..\LightPlayer.Integration.TRJ\LightPlayer.Integration.TRJ.csproj" />
+    </ItemGroup>
+
+</Project>

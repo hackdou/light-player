@@ -1,0 +1,33 @@
+<style>
+    .light-player-play-button
+    {
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+    }
+</style>
+
+<MudIconButton
+    Disabled="@(Disabled)"
+    Icon="@(CurrentIcon)"
+    OnClick="@(OnClickAsync)"
+    Color="Color.Inherit"
+    Edge="Edge.Start"
+    Class="light-player-play-button" />
+
+@code
+{
+    private static readonly string PlayIcon = Icons.Material.Filled.PlayArrow;
+    
+    private static readonly string PauseIcon = Icons.Material.Filled.Pause;
+
+    [Parameter]
+    public bool Disabled { get; set; }
+    
+    [Parameter]
+    public bool IsPlaying { get; set; }
+    
+    [Parameter]
+    public Func<Task> OnClickAsync { get; set; }
+
+    private string CurrentIcon => IsPlaying ? PauseIcon : PlayIcon;
+}

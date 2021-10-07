@@ -1,0 +1,19 @@
+@inject IVideoPlayerService _videoPlayerService
+
+<MudIconButton
+    Disabled="@(Disabled)"
+    Icon="@Icons.Material.Filled.Fullscreen"
+    Color="Color.Inherit"
+    Edge="Edge.End"
+    OnClick="@(OnClickAsync)" />
+
+@code
+{
+    [Parameter]
+    public bool Disabled { get; set; }
+    
+    private async Task OnClickAsync()
+    {
+        await _videoPlayerService.OpenFullscreenAsync();
+    }
+}

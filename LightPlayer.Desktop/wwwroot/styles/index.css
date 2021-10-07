@@ -1,0 +1,23 @@
+body
+{
+    -webkit-user-select: none;
+    -webkit-app-region: drag;
+}
+
+.mud-main-content
+{
+    padding-top:  1rem !important;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+*::-webkit-scrollbar
+{
+    display: none !important;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+*
+{
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+}

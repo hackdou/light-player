@@ -1,0 +1,48 @@
+<style>
+    .light-player-play-list-select
+    {
+        margin-right: 0.5rem;
+    }
+</style>
+
+<MudMenu Disabled="@(Disabled)" FullWidth="true" MaxHeight="300" Class="light-player-play-list-select">
+    <ActivatorContent>
+        <MudChip Color="Color.Default" Icon="@(Icons.Filled.PlaylistPlay)">
+            @(CurrentPlayList?.Title ?? "None")
+        </MudChip>
+    </ActivatorContent>
+    
+    <ChildContent>
+        @if (!Disabled && PlayLists != null)
+        {
+            @foreach (var playList in PlayLists)
+            {
+                <MudMenuItem OnClick="@(() => OnClickAsync(playList))">
+                    @(playList.Title)
+                </MudMenuItem>
+            }
+        }
+    </ChildContent>
+</MudMenu>
+
+@code
+{
+    private bool Disabled => PlayLists == null || PlayLists.Count == 0;
+
+    [Parameter]
+    public IReadOnlyCollection<PlayList> PlayLists { get; set; }
+    
+    [Parameter]
+    public PlayList CurrentPlayList { get; set; }
+    
+    [Parameter]
+    public Func<PlayList, Task> OnSelectAsync { get; set; }
+
+    private async Task OnClickAsync(PlayList playList)
+    {
+        if (OnSelectAsync != null)
+        {
+            await OnSelectAsync(playList);
+        }
+    }
+}

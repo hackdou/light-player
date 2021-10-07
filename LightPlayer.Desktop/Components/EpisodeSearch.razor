@@ -1,0 +1,118 @@
+@inject ILogger<EpisodeSearch> _logger
+@inject IEpisodeService _episodeService
+
+<style>
+    .light-player-episode-search
+    {
+        width: 100%;
+        margin: 0;
+    }
+    
+    .light-player-episode-search .mud-input-outlined-border
+    {
+        border-color: var(--mud-palette-text-secondary) !important;
+    }
+    
+    .light-player-episode-search .mud-input-label-animated
+    {
+        color: var(--mud-palette-text-secondary) !important;
+    }
+    
+    .light-player-episode-search.list
+    {
+        margin-bottom: 5rem;
+    }
+</style>
+
+<MudGrid Class="light-player-episode-search">
+    <MudItem xs="12">
+        <MudTextField
+            Color=""
+            @bind-Value="@(Text)"
+            Label="Search"
+            Clearable="true"
+            Variant="Variant.Outlined"
+            Adornment="Adornment.End"
+            AdornmentIcon="@Icons.Filled.Search"
+            AdornmentColor="@(Color.Inherit)"
+            OnAdornmentClick="@(OnSearchAsync)"
+        />
+    </MudItem>
+</MudGrid>
+
+@if (_loading)
+{
+    <MudProgressLinear Color="Color.Secondary" Indeterminate="true" />
+}
+
+<MudGrid Class="light-player-episode-search list">
+    @foreach (var episode in _episodes)
+    {
+        <MudItem xs="6" sm="3" md="2">
+            <MudCard>
+                <MudCardMedia Image="@(GetImageUrl(episode.ImageUrl))" Height="200" />
+                
+                <MudCardContent>
+                    <MudText Typo="Typo.subtitle1">@(episode.Title)</MudText>
+                    <MudText Typo="Typo.body2">@(episode.ProviderId)</MudText>
+                </MudCardContent>
+                
+                <MudCardActions>
+                    <MudButton
+                        Variant="Variant.Text"
+                        Color="Color.Inherit"
+                        OnClick="@(() => OnClickAsync(episode))">
+                        Play
+                    </MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    }
+</MudGrid>
+
+@code
+{
+    [Parameter]
+    public Func<Episode, Task> OnSelectAsync { get; set; }
+    
+    private string Text { get; set; }
+
+    private bool _loading = false;
+    
+    private Episode[] _episodes = Array.Empty<Episode>();
+
+    private string GetImageUrl(string imageUrl)
+    {
+        return QueryHelpers
+            .AddQueryString("/images", new Dictionary<string, string>
+            {
+                { "srcUrl", imageUrl }
+            });
+    }
+
+    private async Task OnSearchAsync()
+    {
+        _loading = true;
+
+        try
+        {
+            _episodes = (await _episodeService.SearchAsync(Text)).ToArray();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Failed to search episodes");
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task OnClickAsync(Episode episode)
+    {
+        if (OnSelectAsync != null)
+        {
+            await OnSelectAsync(episode);
+        }
+    }
+}

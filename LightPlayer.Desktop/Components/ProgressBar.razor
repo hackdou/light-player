@@ -1,0 +1,96 @@
+<style>
+    .light-player-progress-bar
+    {
+        flex: 1;
+        margin-top: 5px;
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+    }
+    
+    /* Styling the Thumb for Firefox */
+    .light-player-progress-bar > .mud-slider > input[type=range]::-moz-range-thumb
+    {
+        background: #f7f7f7;
+    }
+    
+    /* Styling the Thumb for Webkit/Blink */
+    .light-player-progress-bar > .mud-slider > input[type=range]::-webkit-slider-thumb
+    {
+        background: #f7f7f7;
+    }
+    
+    /* Styling the Track (FireFox) */
+    .light-player-progress-bar > .mud-slider > input[type=range]::-moz-range-track
+    {
+        background: #d6d5d5;
+        box-shadow: 0 0 50px white;
+    }
+    
+    /* Styling the Track (Webkit / Blink) */
+    .light-player-progress-bar > .mud-slider > input[type=range]::-webkit-slider-runnable-track
+    {
+        background: #d6d5d5;
+        box-shadow: 0 0 50px white;
+    }
+</style>
+
+<MudItem Class="light-player-progress-bar">
+    <MudSlider
+        Disabled="@(Disabled)"
+        Min="@(0)"
+        Max="@(Duration)"
+        Value="@CurrentTime"
+        Color="Color.Surface"
+        Immediate="@(true)"
+        ValueChanged="@((int x) => OnValueChangedAsync(x))" />
+</MudItem>
+
+<MudText>
+    @(FormatTime(CurrentTime)) / @(FormatTime(Duration))
+</MudText>
+
+@code
+{
+    [Parameter]
+    public bool Disabled { get; set; }
+    
+    [Parameter]
+    public int Duration { get; set; }
+
+    [Parameter]
+    public int CurrentTime { get; set; }
+
+    [Parameter]
+    public Func<int, Task> OnCurrentTimeChangedAsync { get; set; }
+
+    private string PaddedNumber(int x, int len)
+    {
+        var str = x.ToString();
+
+        while (str.Length < len)
+        {
+            str = "0" + str;
+        }
+
+        return str;
+    }
+
+    private string FormatTime(int time)
+    {
+        var hour = PaddedNumber(time / 60 / 60 / 1000, 2);
+        var min = PaddedNumber(time / 60 / 1000 % 60, 2);
+        var sec = PaddedNumber(time / 1000 % 60, 2);
+
+        return $"{hour}:{min}:{sec}";
+    }
+
+    private async Task OnValueChangedAsync(int value)
+    {
+        CurrentTime = value;
+
+        if (OnCurrentTimeChangedAsync != null)
+        {
+            await OnCurrentTimeChangedAsync(value);
+        }
+    }
+}

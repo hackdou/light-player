@@ -1,0 +1,113 @@
+@inject IVideoPlayerService _videoPlayerService
+
+<style>
+    #light-player-video
+    {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: calc(100vh - var(--mud-appbar-height));
+        object-fill: cover;
+        object-fit: cover;
+        background-image: url(/images/icon.png);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 100px;
+        background-color: black;
+    }
+    
+    #light-player-video.hide
+    {
+        display: none;
+    }
+    
+    .light-player-overlay .mud-overlay-content
+    {
+        padding-top: 4rem;
+    }
+</style>
+
+<video
+    id="light-player-video"
+    class="@(Hide ? "hide" : string.Empty)"
+    @onprogress="@(OnVideoProgressAsync)" />
+
+<MudOverlay Visible="@(IsLoading || !string.IsNullOrEmpty(ErrorMessage))" Class="light-player-overlay">
+    
+    @if (IsLoading)
+    {
+        <MudProgressCircular
+            Color="Color.Default"
+            Size="Size.Small"
+            Indeterminate="true" />
+    }
+
+    <MudText>@(ErrorMessage)</MudText>
+    
+</MudOverlay>
+
+@code
+{
+    private bool IsLoading { get; set; }
+    
+    private string ErrorMessage { get; set; }
+    
+    [Parameter]
+    public bool Hide { get; set; }
+
+    [Parameter]
+    public string VideoSrc { get; set; }
+    
+    [Parameter]
+    public Func<Task> OnProgressAsync { get; set; }
+
+    [JSInvokable]
+    public void NotifyError(string message)
+    {
+        IsLoading = false;
+        ErrorMessage = message;
+        StateHasChanged();
+    }
+
+    private async Task OnVideoProgressAsync()
+    {
+        if (OnProgressAsync != null)
+        {
+            await OnProgressAsync();
+        }
+
+        if (IsLoading)
+        {
+            IsLoading = false;
+            ErrorMessage = string.Empty;
+            StateHasChanged();
+        }
+    }
+
+    private string VideoSrcUnderProxy
+    {
+        get
+        {
+            if (VideoSrc.EndsWith(".m3u8"))
+            {
+                return $"/streams/{Base64Utils.ToBase64(VideoSrc)}.m3u8";
+            }
+            
+            return VideoSrc;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var currentSrc = await _videoPlayerService.GetCurrentSrcAsync();
+        
+        if (!string.IsNullOrWhiteSpace(VideoSrc) && !string.Equals(currentSrc, VideoSrcUnderProxy))
+        {
+            IsLoading = true;
+            ErrorMessage = string.Empty;
+            await _videoPlayerService.LoadAsync(VideoSrcUnderProxy, this);
+            StateHasChanged();
+        }
+    }
+}

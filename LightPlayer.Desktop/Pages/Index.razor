@@ -1,0 +1,160 @@
+@page "/"
+
+@inject IEpisodeService _episodeService
+@inject IPlayListService _playListService
+@inject IVideoService _videoService
+@inject IVideoPlayerService _videoPlayerService
+
+<MudLayout Style="min-height: 100vh;">
+    
+    <MudMainContent>
+
+        <EpisodeSearch OnSelectAsync="@(OnSelectEpisodeAsync)" />
+
+        <VideoPlayer
+            Hide="@(!ShouldShowVideoPlayer)"
+            VideoSrc="@(CurrentVideoSrc)"
+            OnProgressAsync="@(OnVideoProgressAsync)" />
+
+    </MudMainContent>
+
+    <MudAppBar Bottom="true" Fixed="true" Elevation="1" Style="-webkit-app-region: no-drag;">
+
+        <PlayListSelect
+            PlayLists="@(CurrentPlayLists)"
+            CurrentPlayList="@(CurrentPlayList)"
+            OnSelectAsync="@(OnSelectPlayListAsync)" />
+
+        <VideoSelect
+            Videos="@(CurrentPlayList?.Videos)"
+            CurrentVideo="@(CurrentVideo)"
+            OnSelectAsync="@(OnSelectVideoAsync)" />
+
+        <PlayButton
+            Disabled="@(!ShouldShowVideoPlayer)"
+            IsPlaying="@(IsPlaying)"
+            OnClickAsync="@(OnClickPlayButtonAsync)" />
+
+        <ProgressBar
+            Disabled="@(!ShouldShowVideoPlayer)"
+            Duration="@(Duration)"
+            CurrentTime="@(CurrentTime)"
+            OnCurrentTimeChangedAsync="@(OnCurrentTimeChangedAsync)" />
+
+        <VolumeControl Disabled="@(!ShouldShowVideoPlayer)" />
+        
+        <FullscreenButton Disabled="@(!ShouldShowVideoPlayer)" />
+        
+        <MudIconButton
+            Disabled="@(!ShouldShowVideoPlayer)"
+            Icon="@Icons.Material.Filled.Close"
+            Color="Color.Inherit"
+            OnClick="@(OnCloseAsync)" />
+
+    </MudAppBar>
+    
+</MudLayout>
+
+@code
+{
+    private Episode CurrentEpisode { get; set; }
+
+    private IReadOnlyCollection<PlayList> CurrentPlayLists { get; set; }
+    
+    private PlayList CurrentPlayList { get; set; }
+
+    private Video CurrentVideo { get; set; }
+
+    private string CurrentVideoSrc { get; set; }
+    
+    private bool IsPlaying { get; set; }
+    
+    private int Duration { get; set; }
+    
+    private int CurrentTime { get; set; }
+
+    private async Task OnSelectEpisodeAsync(Episode episode)
+    {
+        CurrentEpisode = episode;
+        CurrentPlayLists = (await _playListService.QueryAsync(CurrentEpisode)).ToArray();
+        await OnSelectPlayListAsync(CurrentPlayLists.FirstOrDefault());
+        StateHasChanged();
+    }
+
+    private async Task OnSelectPlayListAsync(PlayList playList)
+    {
+        CurrentPlayList = playList;
+        await OnSelectVideoAsync(CurrentPlayList.Videos.FirstOrDefault());
+        StateHasChanged();
+    }
+
+    private async Task OnSelectVideoAsync(Video video)
+    {
+        CurrentVideo = video;
+        CurrentVideoSrc = await _videoService.GetUrlAsync(CurrentVideo);
+        StateHasChanged();
+    }
+
+    private bool ShouldShowVideoPlayer => !string.IsNullOrEmpty(CurrentVideoSrc);
+    
+    private async Task OnVideoProgressAsync()
+    {
+        await UpdateIsPlaying();
+        await UpdateProgress();
+    }
+    
+    private async Task UpdateIsPlaying()
+    {
+        var isPlaying = await _videoPlayerService.GetIsPlayingAsync();
+
+        if (IsPlaying != isPlaying)
+        {
+            IsPlaying = isPlaying;
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnClickPlayButtonAsync()
+    {
+        if (IsPlaying)
+        {
+            await _videoPlayerService.PauseAsync();
+        }
+        else
+        {
+            await _videoPlayerService.PlayAsync();
+        }
+
+        await UpdateIsPlaying();
+    }
+
+    private async Task UpdateProgress()
+    {
+        var duration = await _videoPlayerService.GetDurationAsync();
+        var currentTime = await _videoPlayerService.GetCurrentTimeAsync();
+
+        if (Duration != duration || CurrentTime != currentTime)
+        {
+            Duration = duration;
+            CurrentTime = currentTime;
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnCurrentTimeChangedAsync(int currentTime)
+    {
+        if (CurrentTime != currentTime)
+        {
+            CurrentTime = currentTime;
+            await _videoPlayerService.SetCurrentTimeAsync(currentTime);
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnCloseAsync()
+    {
+        await _videoPlayerService.PauseAsync();
+        CurrentVideoSrc = null;
+        StateHasChanged();
+    }
+}

@@ -36,6 +36,11 @@
       "**/*"
     ],
     "linux": {
+      "target": [
+        "deb",
+        "snap",
+        "AppImage"
+      ],
       "category": "Video",
       "description": "Search for movies and play them"
     }

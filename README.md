@@ -11,8 +11,6 @@ Search for movies and play them.
 
 The video resources searched by this software are collected on the Internet, and the copyright belongs to the original video company. The software does not provide storage, recording and uploading of video resources, and the copyright belongs to the original author. If this software inadvertently infringes the author's rights and interests, please send an email to aguang.xyz@gmail.com, the author of this software will reply and deal with it in time.
 
-<!--
 ## Install
 
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/light-player)
--->

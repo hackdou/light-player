@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 
-namespace LightPlayer.Desktop.Utils
+namespace LightPlayer.Core.Utils
 {
     public static class Base64Utils
     {

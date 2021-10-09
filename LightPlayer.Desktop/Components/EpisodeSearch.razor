@@ -83,11 +83,7 @@
 
     private string GetImageUrl(string imageUrl)
     {
-        return QueryHelpers
-            .AddQueryString("/images", new Dictionary<string, string>
-            {
-                { "srcUrl", imageUrl }
-            });
+        return $"/proxy/{Base64Utils.ToBase64(imageUrl)}";
     }
 
     private async Task OnSearchAsync()

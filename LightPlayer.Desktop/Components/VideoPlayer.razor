@@ -91,7 +91,7 @@
         {
             if (VideoSrc.EndsWith(".m3u8"))
             {
-                return $"/streams/{Base64Utils.ToBase64(VideoSrc)}.m3u8";
+                return $"/proxy/{Base64Utils.ToBase64(VideoSrc)}.m3u8";
             }
             
             return VideoSrc;

@@ -45,9 +45,6 @@ namespace LightPlayer.Desktop
             services.AddPlayListService();
             services.AddVideoService();
 
-            // Downloader service.
-            services.AddDownloaderService();
-            
             // Video player service.
             services.AddVideoPlayerService();
 

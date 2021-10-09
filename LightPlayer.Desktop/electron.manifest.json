@@ -4,7 +4,10 @@
     "imageFile": ""
   },
   "name": "LightPlayer",
-  "author": "Grey Wang",
+  "author": {
+    "name": "Grey Wang",
+    "email": "aguang.xyz@gmail.com"
+  },
   "singleInstance": false,
   "environment": "Production",
   "build": {
@@ -31,6 +34,10 @@
         "filter": [ "**/*" ]
       },
       "**/*"
-    ]
+    ],
+    "linux": {
+      "category": "Video",
+      "description": "Search for movies and play them"
+    }
   }
 }
